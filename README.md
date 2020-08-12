@@ -55,8 +55,30 @@ we define a graphql server using apollo.
 - define the graphql query
 - define the resolver to run ```flow steps```
 
-## TODO
-Continue with deployment of bot service.
-- GQL client for python container AI
-- Data modeling for PG database. Need to migrate from postgres firebase starter git repo
-- https://hasura.io/learn/graphql/hasura/custom-business-logic/
+
+## Event webhooks
+
+We were able to integrate event webhooks in Hasura and use that to trigger the SendGrid API to send a email to notify us a new email signed up.
+
+### SendGrid
+Create SendGrid account 
+- Select ```Email API``` and then ```Integration Guide```
+- Here you register a new API key and associate that with SendGrid SMTP servers.
+- Copy the user/pass/smtp host 
+
+### Create web service that will process the event trigger request
+We shall use [glitch](www.glitch.com) to quickly create a web service that will
+- Configure the SendGrid API based on above ```SendGrid``` details
+- Listen for ```/send-email``` POST sign up request
+- Extract the name of user in the request
+- Send to the SendGrid server with the content we want to deliver. 
+
+### Create event webhook in Hasura console
+Navigate to ```Events``` tab in the console and create a new ```Event Trigger```.
+We shall create a new trigger when a new user is registered
+- Trigger operation: Insert
+- WebHook URL: (Your API that will talk to SendGrid)
+
+### Testing
+Test this out by creating a new user in the ```users``` table.
+You will find that an email will be sent because the Hasura ```Event Trigger``` had notified the web service we created to send an email via ```SendGrid```

@@ -82,3 +82,59 @@ We shall create a new trigger when a new user is registered
 ### Testing
 Test this out by creating a new user in the ```users``` table.
 You will find that an email will be sent because the Hasura ```Event Trigger``` had notified the web service we created to send an email via ```SendGrid```
+
+
+
+# Advanced Hasura tutorial
+
+[See link here](https://hasura.io/learn/graphql/hasura-auth-slack/setup/)
+
+## Apply migrations
+Downloading the zip file contains the postgres SQL schema for our database and the hasura metadata for the object relationship mapping.
+
+Running ```hasura migrate --admin-secret secret apply``` will seed the database and hasura graphql mapping for us.
+
+This command should be applied where a folder called ```migrations``` contains:
+- SQL file  
+- yaml file  
+
+## Roles for the data
+We first need to begin by asking ourselves:
+- What roles should exist for this application?
+- What levels of access should each role have for the data?
+
+We realize it is simply a ```user``` role
+The ```user``` role shall have limited permissions on the tables
+- Users
+- Workspaces
+- Channels
+- Channel Threads
+- Channel Thread Message
+
+## Access control 
+When we define the levels of access for the ```user``` role for our application data we can easily do this through the web console.
+For example:
+- Users can look up data about themselves
+- Users can look up other users of the same workspace
+
+This can look something like this:
+```json
+// Recall that X-Hasura-User-Id is provided as a Header field by GQL request
+{
+  "_or": [
+    {
+      "id": {
+        "_eq": "X-Hasura-User-Id"
+      }
+    },
+    {
+      "workspace_members": {
+        "user_id": {
+          "_eq": "X-Hasura-User-Id"
+        }
+      }
+    }
+  ]
+}
+```
+

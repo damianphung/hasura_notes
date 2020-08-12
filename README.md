@@ -138,3 +138,38 @@ This can look something like this:
 }
 ```
 
+### Integrating with an Auth service
+https://hasura.io/learn/graphql/hasura-auth-slack/choosing-jwt-mode/
+
+You can use a service like Auth0 such that when you login as a user on their service, Auth0 will provide a JSON web token that contains a uuid.
+
+This uuid shall be the same value as our user id we define in our database.
+Therefore
+X-Hasura-User-Id = Auth0-uuid
+
+It would be up to the auth service to define how you configure the rules and how to put the custom X-Hasura-* headers upon receiving the JWT.
+
+For example:
+We defined custom rules in our Auth0 application to inject the hasura namespace in the JWT context.
+
+The client logging in to Auth0 would receive this Token and forward it to the Hasura Graphql Server.
+
+Alternatively if we want a single interface; the client can directly query an auth request to the hasura server. The hasura server will redirect that request to Auth0. The response comes back from Auth0 and hasura will then forward it back to the client.
+
+Client will most likely append the token as a Header field in the Authorization.
+
+
+# TODO
+### Vue graphql
+https://hasura.io/learn/graphql/vue/setup/
+
+
+### AR with react native and hasura
+
+Something interesting.
+Combine AR with image recognition.
+- Scan a personal card; Have information / profile picture pop up in camera!
+
+[See this link on ViroReact](https://dev.to/hasurahq/building-ar-apps-in-react-native-powered-by-graphql-using-hasura-h9m)
+
+ViroReact is a react wrapper around ARKit and ARCore

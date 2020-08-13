@@ -164,8 +164,8 @@ Client will most likely append the token as a Header field in the Authorization.
 We added to the SQL seeding file in migrations:
 ```SQL
 CREATE USER metabase WITH PASSWORD 'metabase';
-GRANT USAGE ON SCHEMA public TO metabase;
-GRANT SELECT ON public.users TO metabase;
+CREATE DATABASE metabasedb;
+GRANT ALL PRIVILEGES ON DATABASE metabasedb to metabase;
 -- Put in other tables you wont metabase to have access to
 -- in this case only the users table will be visible
 ```
@@ -178,7 +178,7 @@ Then we added to the docker-compose file and restarted
       - "3000:3000"    
     environment:
       MB_DB_TYPE: postgres 
-      MB_DB_DBNAME: postgres
+      MB_DB_DBNAME: metabasedb
       MB_DB_PORT: 5432
       MB_DB_USER: metabase
       MB_DB_PASS: metabase
@@ -188,14 +188,15 @@ Then we added to the docker-compose file and restarted
     - "postgres"      
 ```
 Still need to figure out how to apply migrations upon starting.
+
 I need to run ```hasura migrate  --admin-secret myadminsecretkey apply``` before the docker restart to apply the seed data..
 
+It is worth noting we are creating a new database ```metabasedb```. This is for metabase itself to store data about our data. 
 
-Anyways opening up ```localhost:3000``` on our browser asks us a few questions about the database setup on metabase.
 
-We connect to our postgres DB with metabase credentials.
+Opening up ```localhost:3000``` on our browser asks us a few questions about the database setup on metabase.
 
-The metabase container seems to create a bunch of tables which are populated in the ```public``` schema.
+We connect to our postgres DB with the admin credentials.
+Thats it!.
 
-I wonder if putting all our data that is not in the ```public``` schema would be a better approach.
-
+Now when we add data to the postgres DB, metabase will pick it up.

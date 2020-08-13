@@ -127,5 +127,5 @@ INSERT INTO workspace_user_type(type) VALUES ('admin'), ('owner'), ('member');
 CREATE USER metabase WITH PASSWORD 'metabase';
 CREATE DATABASE metabasedb;
 GRANT ALL PRIVILEGES ON DATABASE metabasedb to metabase;
-GRANT USAGE ON SCHEMA public TO metabase;
-GRANT SELECT ON public.users TO metabase;
+-- GRANT USAGE ON SCHEMA public TO metabase;
+

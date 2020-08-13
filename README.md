@@ -160,17 +160,19 @@ Client will most likely append the token as a Header field in the Authorization.
 
 # Metabase Analytics
 
+This is a good blog on how to set up metabase 
+[See this link](https://www.alibabacloud.com/blog/how-to-setup-postgresql-server-for-metabase_594913)
 
-We added to the SQL seeding file in migrations:
+
+We will need to add create a new user and database for metabase.
+Run these commands in the postgres container
 ```SQL
 CREATE USER metabase WITH PASSWORD 'metabase';
-CREATE DATABASE metabasedb;
+CREATE DATABASE metabasedb; -- This cant run as part of hasura migration command
 GRANT ALL PRIVILEGES ON DATABASE metabasedb to metabase;
--- Put in other tables you wont metabase to have access to
--- in this case only the users table will be visible
 ```
 
-Then we added to the docker-compose file and restarted
+Now uncomment the metabase image in ```docker-compose.yaml```
 ```dockerfile
   metabase: 
     image: metabase/metabase:latest
@@ -183,20 +185,20 @@ Then we added to the docker-compose file and restarted
       MB_DB_USER: metabase
       MB_DB_PASS: metabase
       MB_DB_HOST: postgres
-      MB_EMOJI_IN_LOGS: "true"
+      MB_EMOJI_IN_LOGS: "true" # why not :)
     depends_on:
     - "postgres"      
 ```
-Still need to figure out how to apply migrations upon starting.
-
-I need to run ```hasura migrate  --admin-secret myadminsecretkey apply``` before the docker restart to apply the seed data..
 
 It is worth noting we are creating a new database ```metabasedb```. This is for metabase itself to store data about our data. 
 
-
 Opening up ```localhost:3000``` on our browser asks us a few questions about the database setup on metabase.
 
-We connect to our postgres DB with the admin credentials.
+We connect to our postgres DB with the *ADMIN* credentials.
+
 Thats it!.
 
 Now when we add data to the postgres DB, metabase will pick it up.
+
+
+# Posthog analytics

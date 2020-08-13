@@ -27,16 +27,28 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
       #HASURA_GRAPHQL_JWT_SECRET : '{"type": "RS512", "key": "-----BEGIN CERTIFICATE-----\nMIIDDTCCAfWgAwIBAgIJUKmij8E68fJcMA0GCSqGSIb3DQEBCwUAMCQxIjAgBgNV\nBAMTGWRldi13djVjczkzay5hdS5hdXRoMC5jb20wHhcNMjAwODEwMDUxMDQ0WhcN\nMzQwNDE5MDUxMDQ0WjAkMSIwIAYDVQQDExlkZXYtd3Y1Y3M5M2suYXUuYXV0aDAu\nY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Hwm6myzG3G2paFk\noTO2nI4fED488J/bpnFIOmbiF11pptLPzit5KZ+eih+x9ie7SEJuL0UutjuZU1DZ\nxC/MCDqppWUOfQ4/Zwp3WyhwbU32NSH2iJ//8fytPHY92S/nuWXs1B6q5Isf0n6T\nHZzTpPCKzNBYsIhyM4T/HF6kqRI8cSQJ/3MokpVHx+dAnXKEJRHs1OQ/5QNtWiuB\nW8sVRv9MMc2WufhiYv+AWvFLynfn+QQuOyyTcG/Q7pYamc94+Q1WSbR2+h9RTHpv\ngPNflaGvdq9HHC9EW1IQ5gcOjar2q+Jo3gQEmBCRL3sM6XwNfUJKfICOcehslms7\nQY+P1wIDAQABo0IwQDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBS2Pe8+X8z4\nbrlYVYIShTNhf4GAdzAOBgNVHQ8BAf8EBAMCAoQwDQYJKoZIhvcNAQELBQADggEB\nAIGBoP6AlYPEoBN8f0Vvx+79cvgYPoyhGAykdhudjiuda4R3nhJFa67oNInO5ZkN\niNqRXvtle+Dy7lUcSKudhz+6w1QTDzpjiEaBG3vBMZyqqdC2MdGY5Z23yQruS/Lx\nBklq/0u+8s2lgxoZC9f60HUyjfQ0hMGka8jMtDyBVSR8u7rNbLRxC7b7OFoa9sb2\napWfUTKQJytT8Qu8vb4DcAgyTP+8PPsZdtXKmCB4fDrluBWEWHV+sY7ptuvV7Gtu\n9StcenDAPME9oSSTTnZuPoPB5gkXPYSy5VZTCsMpxU8XwnlRCtx9fed6oBw5qPKk\nDXtU8QvQwcI2+DgdpdaBFLI=\n-----END CERTIFICATE-----"}'
   
-  # graphql-migrations:
-  #   image: dvasdekis/hasura-cli-docker:latest
-  #   depends_on:
-  #     - "postgres"
-  #     - graphql-engine
-  #   restart: on-failure
-  #   command: metadata apply --endpoint "http://graphql-engine:8080" --admin-secret myadminsecretkey #--project migrations
-  #   volumes:
-  #     - ./slack-backend:/hasuracli/migrations  
+  graphql-migrations:
+    image: hasura/graphql-engine:v1.3.0.cli-migrations-v2
+    depends_on:
+      - "postgres"
+      - graphql-engine
+    restart: on-failure
+    environment: 
+      # HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
+      # HASURA_GRAPHQL_METADATA_DIR: 
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+    command: hasura-cli migrate  --admin-secret myadminsecretkey --project /hasura-migrations apply
+    volumes:
+      - ./slack-backend:/hasura-migrations
   
+
+# Run this after docker-compose file AFTER migration completes
+# Bring down the compose build
+# Run the SQL statements in psql container, below
+#   CREATE USER metabase WITH PASSWORD 'metabase';
+#   CREATE DATABASE metabasedb;
+#   GRANT ALL PRIVILEGES ON DATABASE metabasedb to metabase;      
+# Now un-comment the metabase image
   # metabase: 
   #   image: metabase/metabase:latest
   #   ports:

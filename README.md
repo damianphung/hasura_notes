@@ -158,18 +158,42 @@ Alternatively if we want a single interface; the client can directly query an au
 
 Client will most likely append the token as a Header field in the Authorization.
 
-
-# TODO
-### Vue graphql
-https://hasura.io/learn/graphql/vue/setup/
+# Metabase Analytics
 
 
-### AR with react native and hasura
+We added to the SQL seeding file in migrations:
+```SQL
+CREATE USER metabase WITH PASSWORD 'metabase';
+GRANT USAGE ON SCHEMA public TO metabase;
+GRANT SELECT ON public.users TO metabase;
+```
 
-Something interesting.
-Combine AR with image recognition.
-- Scan a personal card; Have information / profile picture pop up in camera!
+Then we added to the docker-compose file and restarted
+```dockerfile
+  metabase: 
+    image: metabase/metabase:latest
+    ports:
+      - "3000:3000"    
+    environment:
+      MB_DB_TYPE: postgres 
+      MB_DB_DBNAME: postgres
+      MB_DB_PORT: 5432
+      MB_DB_USER: metabase
+      MB_DB_PASS: metabase
+      MB_DB_HOST: postgres
+      MB_EMOJI_IN_LOGS: "true"
+    depends_on:
+    - "postgres"      
+```
+Still need to figure out how to apply migrations upon starting.
+I need to run ```hasura migrate  --admin-secret myadminsecretkey apply``` before the docker restart to apply the seed data..
 
-[See this link on ViroReact](https://dev.to/hasurahq/building-ar-apps-in-react-native-powered-by-graphql-using-hasura-h9m)
 
-ViroReact is a react wrapper around ARKit and ARCore
+Anyways opening up ```localhost:3000``` on our browser asks us a few questions about the database setup on metabase.
+
+We connect to our postgres DB with metabase credentials.
+
+The metabase container seems to create a bunch of tables which are populated in the ```public``` schema.
+
+I wonder if putting all our data that is not in the ```public``` schema would be a better approach.
+

@@ -25,6 +25,33 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       ## uncomment next line to set an admin secret
       HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      #HASURA_GRAPHQL_JWT_SECRET : '{"type": "RS512", "key": "-----BEGIN CERTIFICATE-----\nMIIDDTCCAfWgAwIBAgIJUKmij8E68fJcMA0GCSqGSIb3DQEBCwUAMCQxIjAgBgNV\nBAMTGWRldi13djVjczkzay5hdS5hdXRoMC5jb20wHhcNMjAwODEwMDUxMDQ0WhcN\nMzQwNDE5MDUxMDQ0WjAkMSIwIAYDVQQDExlkZXYtd3Y1Y3M5M2suYXUuYXV0aDAu\nY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Hwm6myzG3G2paFk\noTO2nI4fED488J/bpnFIOmbiF11pptLPzit5KZ+eih+x9ie7SEJuL0UutjuZU1DZ\nxC/MCDqppWUOfQ4/Zwp3WyhwbU32NSH2iJ//8fytPHY92S/nuWXs1B6q5Isf0n6T\nHZzTpPCKzNBYsIhyM4T/HF6kqRI8cSQJ/3MokpVHx+dAnXKEJRHs1OQ/5QNtWiuB\nW8sVRv9MMc2WufhiYv+AWvFLynfn+QQuOyyTcG/Q7pYamc94+Q1WSbR2+h9RTHpv\ngPNflaGvdq9HHC9EW1IQ5gcOjar2q+Jo3gQEmBCRL3sM6XwNfUJKfICOcehslms7\nQY+P1wIDAQABo0IwQDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBS2Pe8+X8z4\nbrlYVYIShTNhf4GAdzAOBgNVHQ8BAf8EBAMCAoQwDQYJKoZIhvcNAQELBQADggEB\nAIGBoP6AlYPEoBN8f0Vvx+79cvgYPoyhGAykdhudjiuda4R3nhJFa67oNInO5ZkN\niNqRXvtle+Dy7lUcSKudhz+6w1QTDzpjiEaBG3vBMZyqqdC2MdGY5Z23yQruS/Lx\nBklq/0u+8s2lgxoZC9f60HUyjfQ0hMGka8jMtDyBVSR8u7rNbLRxC7b7OFoa9sb2\napWfUTKQJytT8Qu8vb4DcAgyTP+8PPsZdtXKmCB4fDrluBWEWHV+sY7ptuvV7Gtu\n9StcenDAPME9oSSTTnZuPoPB5gkXPYSy5VZTCsMpxU8XwnlRCtx9fed6oBw5qPKk\nDXtU8QvQwcI2+DgdpdaBFLI=\n-----END CERTIFICATE-----"}'
+  
+  # graphql-migrations:
+  #   image: dvasdekis/hasura-cli-docker:latest
+  #   depends_on:
+  #     - "postgres"
+  #     - graphql-engine
+  #   restart: on-failure
+  #   command: metadata apply --endpoint "http://graphql-engine:8080" --admin-secret myadminsecretkey #--project migrations
+  #   volumes:
+  #     - ./slack-backend:/hasuracli/migrations  
+  
+  # metabase: 
+  #   image: metabase/metabase:latest
+  #   ports:
+  #     - "3000:3000"    
+  #   environment:
+  #     MB_DB_TYPE: postgres 
+  #     MB_DB_DBNAME: metabasedb
+  #     MB_DB_PORT: 5432
+  #     MB_DB_USER: metabase
+  #     MB_DB_PASS: metabase
+  #     MB_DB_HOST: postgres
+  #     MB_EMOJI_IN_LOGS: "true"
+  #   depends_on:
+  #   - "postgres"      
+
 volumes:
   db_data:
 

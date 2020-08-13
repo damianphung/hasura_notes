@@ -41,6 +41,26 @@ services:
     volumes:
       - ./slack-backend:/hasura-migrations
   
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"  
+      
+  web:
+    image: posthog/posthog:latest
+    ports:
+      - "8000:8000"
+      - "80:8000"
+    environment:
+      IS_DOCKER: "true"
+      DATABASE_URL: "postgres://postgres:postgrespassword@postgres:5432/postgres"
+      REDIS_URL: "redis://redis:6379/"
+      SECRET_KEY: "mysecretkey"
+      DEBUG: 1
+      DISABLE_SECURE_SSL_REDIRECT: 1
+    depends_on:
+      - "postgres"
+      - "redis"
 
 # Run this after docker-compose file AFTER migration completes
 # Bring down the compose build

@@ -166,6 +166,8 @@ We added to the SQL seeding file in migrations:
 CREATE USER metabase WITH PASSWORD 'metabase';
 GRANT USAGE ON SCHEMA public TO metabase;
 GRANT SELECT ON public.users TO metabase;
+-- Put in other tables you wont metabase to have access to
+-- in this case only the users table will be visible
 ```
 
 Then we added to the docker-compose file and restarted
